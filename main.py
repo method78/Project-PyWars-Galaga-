@@ -13,6 +13,7 @@ background_color = (0, 0, 0)
 
 main_bullet_image = pygame.image.load("images/main_bullet.png")
 warrior_image = pygame.image.load("images/warrior.png")
+shotgun_image = pygame.image.load("images/enemy.jpg")  # Загрузка изображения дробовика
 
 warrior_rect = warrior_image.get_rect(center=(50, 250))
 list_enemies = []
@@ -23,11 +24,13 @@ for _ in range(2):
 speed = 10
 target = None
 
+# Позиции для пушек (7 пушек с вертикальным отступом)
+shotgun_positions = [(width - 100, 10 + i * 60) for i in range(7)]  # 7 пушек с вертикальным отступом
 
 def move_towards_target(rect, target_x, target_y):
     dx = target_x - rect.centerx
     dy = target_y - rect.centery
-    distance = math.sqrt(dx**2 + dy**2)
+    distance = math.sqrt(dx ** 2 + dy ** 2)
 
     if distance > 0:
         dx /= distance
@@ -37,16 +40,16 @@ def move_towards_target(rect, target_x, target_y):
 
     return rect
 
-
 def main():
     global warrior_rect, target, main_bullet_image
     clock = pygame.time.Clock()
-    MYEVENTTYPE = pygame.USEREVENT + 1  # событие движения пуль
+    MYEVENTTYPE = pygame.USEREVENT + 1
     pygame.time.set_timer(MYEVENTTYPE, 1)
-    MYEVENTTYPE2 = pygame.USEREVENT + 1  # событие выстрела врагов
+    MYEVENTTYPE2 = pygame.USEREVENT + 1
     pygame.time.set_timer(MYEVENTTYPE2, 50)
-    list_main_bullets = []  # список наших пуль
-    list_enemy_bullets = []  # список вражеских пуль
+    list_main_bullets = []
+    list_enemy_bullets = []
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -55,16 +58,17 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 target = event.pos
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:  # действие на пробел
+                if event.key == pygame.K_SPACE:
                     list_main_bullets.append(main_bullet_image.get_rect(center=(warrior_rect.centerx + 30,
                                                                                 warrior_rect.centery + 10)))
             if event.type == MYEVENTTYPE:
-                for bullet in list_main_bullets:  # цикл движения наших пуль
+                for bullet in list_main_bullets:
                     bullet.centerx += 10
             if event.type == MYEVENTTYPE2:
                 pass  # выстрел врагов каждые пол секунды
 
         screen.fill(background_color)
+
         if target:
             if target[0] > 800:
                 warrior_rect = move_towards_target(warrior_rect, 800, target[1])
@@ -74,12 +78,18 @@ def main():
                 target = None
 
         screen.blit(warrior_image, warrior_rect)
+
         if list_main_bullets:
             for bullet in list_main_bullets:
                 screen.blit(main_bullet_image, bullet)
+
+        # Отрисовка дробовиков в верхнем правом углу
+        for pos in shotgun_positions:
+            shotgun_rect = shotgun_image.get_rect(topleft=pos)  # Положение дробовика
+            screen.blit(shotgun_image, shotgun_rect)
+
         pygame.display.flip()
         clock.tick(60)
-
 
 if __name__ == "__main__":
     main()
