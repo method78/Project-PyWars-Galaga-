@@ -139,7 +139,21 @@ def main():
                     bullet = Bullet(main_bullet_image, (player.rect.centerx + 30, player.rect.centery + 10))
                     list_main_bullets.append(bullet)
                     player.current_bullets += 1
-
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    if player.rect.centery - 40 > 0:
+                        target = (player.rect.centerx, player.rect.centery - 40)
+                if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    if player.rect.centery + 40 < 450:
+                        target = (player.rect.centerx, player.rect.centery + 40)
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    if player.rect.centerx - 40 > 0:
+                        target = (player.rect.centerx - 40, player.rect.centery)
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    if player.rect.centerx + 40 < 800:
+                        target = (player.rect.centerx + 40, player.rect.centery)
+                # if event.key == pygame.K_f:  # restart
+                #     main()
+                #     return
             if event.type == MYEVENTTYPE and not end:
                 for shotgun in shotguns:
                     bullet = shotgun.shoot(current_time)
